@@ -21,17 +21,16 @@ contract SideEntranceLenderPool {
     }
 
     function withdraw() external {
-        uint256 amountToWithdraw = balances[msg.sender];
+        uint256 amountToWithdraw = balances[msg.sender];      
         balances[msg.sender] = 0;
         payable(msg.sender).sendValue(amountToWithdraw);
+       
     }
 
     function flashLoan(uint256 amount) external {
         uint256 balanceBefore = address(this).balance;
         require(balanceBefore >= amount, "Not enough ETH in balance");
-        
         IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();
-
         require(address(this).balance >= balanceBefore, "Flash loan hasn't been paid back");        
     }
 }
