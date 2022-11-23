@@ -4,12 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../side-entrance/SideEntranceLenderPool.sol";
 
-interface ILenderPool {
-    function flashLoan(uint256 amount) external;
-    function deposit() external payable; 
-    function withdraw() external; 
-}
-
 contract AttackSideEntrance is Ownable {
 
     SideEntranceLenderPool private immutable pool;
