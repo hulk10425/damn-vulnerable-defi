@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "hardhat/console.sol";
 
 contract BrokenSea {
     struct Bid {
@@ -24,7 +25,6 @@ contract BrokenSea {
     {
         Bid memory bid = Bid(address(erc721Token),erc721TokenId,address(erc20Token),amount);
         bids[msg.sender]= bid;
-        erc721Token.setApprovalForAll(address(this),true);
     }
 
     function acceptBid(
@@ -37,18 +37,21 @@ contract BrokenSea {
         external
     {
         
-        uint256 bidAmount = bids[msg.sender].amount;
+        uint256 bidAmount = bids[bidder].amount;
      
         require(bidAmount != 0, "BrokenSea::fillBid/BID_PRICE_ZERO");
        
         require(bidAmount >= amount, "BrokenSea::fillBid/BID_TOO_LOW");
 
         // Mark bid as filled before performing transfers.
-        delete bids[msg.sender];
+        delete bids[bidder];
 
-        erc20Token.approve(address(this), type(uint256).max);
-
+        console.log("amount");
+        console.log(amount);
         erc20Token.transferFrom(bidder, msg.sender, amount);
+
+        console.log("erc721TokenId");
+        console.log(erc721TokenId);
 
         erc721Token.transferFrom(msg.sender,bidder,erc721TokenId);
 
