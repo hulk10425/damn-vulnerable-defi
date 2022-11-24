@@ -31,7 +31,7 @@ contract BrokenSea {
         address bidder,
         ERC721 erc721Token,
         uint erc721TokenId,
-        ERC20 erc20Token,
+        ERC721 erc20Token,
         uint256 amount
     )
         external
@@ -43,17 +43,11 @@ contract BrokenSea {
        
         require(bidAmount >= amount, "BrokenSea::fillBid/BID_TOO_LOW");
 
-        // Mark bid as filled before performing transfers.
         delete bids[bidder];
 
-        console.log("amount");
-        console.log(amount);
-        erc20Token.transferFrom(bidder, msg.sender, amount);
-
-        console.log("erc721TokenId");
-        console.log(erc721TokenId);
-
         erc721Token.transferFrom(msg.sender,bidder,erc721TokenId);
+
+        erc20Token.transferFrom(bidder, msg.sender, amount);
 
     }
 
